@@ -1,0 +1,13 @@
+# Credentials -- never commit.
+.env
+
+# Cached raw email text and finished translations.
+.cache/
+translations/
+__pycache__/
+
+# Legacy flat layout, moved into translations/ on first run.
+[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.txt
+
+# Claude Code / GSD plugin scratch state.
+.planning/

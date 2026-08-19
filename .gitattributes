@@ -1,0 +1,15 @@
+# Normalize to LF in the repository.
+* text=auto eol=lf
+
+# Shell scripts must keep LF: a CRLF shebang ("#!/usr/bin/env bash\r") fails
+# on macOS and Linux with "bad interpreter".
+*.sh        text eol=lf
+*.command   text eol=lf
+
+# Windows-only scripts keep CRLF.
+*.bat       text eol=crlf
+*.ps1       text eol=crlf
+
+# Never touch these.
+*.png binary
+*.jpg binary

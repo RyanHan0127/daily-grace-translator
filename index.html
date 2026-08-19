@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily Grace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=PT+Sans:wght@400;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:     #F2ECDF;
+    --paper-2:   #FBF7EE;
+    --ink:       #221F1A;
+    --ink-soft:  #6A6155;
+    --ink-faint: #9A9082;
+    --accent:    #8A3324;
+    --rule:      #D5CAB4;
+    --shadow:    0 1px 2px rgba(60,48,30,.06), 0 12px 34px -14px rgba(60,48,30,.28);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:     #14130F;
+      --paper-2:   #1C1A15;
+      --ink:       #ECE4D3;
+      --ink-soft:  #A79C87;
+      --ink-faint: #6E6555;
+      --accent:    #D98A5B;
+      --rule:      #332F27;
+      --shadow:    0 1px 2px rgba(0,0,0,.4), 0 18px 40px -18px rgba(0,0,0,.7);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "PT Serif", Georgia, serif;
+    line-height: 1.75;
+    background-image:
+      radial-gradient(120% 80% at 50% -20%, rgba(180,116,74,.14), transparent 60%);
+    background-attachment: fixed;
+  }
+
+  .grain {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: .16;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  @media (prefers-color-scheme: dark) {
+    .grain { mix-blend-mode: overlay; opacity: .07; }
+  }
+
+  ::selection { background: var(--accent); color: var(--paper-2); }
+
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: clamp(2rem, 6vw, 4.5rem) clamp(1.25rem, 5vw, 2.5rem) 6rem;
+  }
+
+  /* ---------- masthead ---------- */
+
+  .masthead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .wordmark {
+    font-family: "Cormorant Garamond", Garamond, serif;
+    font-size: clamp(2.1rem, 6vw, 3.1rem);
+    font-weight: 600;
+    line-height: 1;
+    margin: 0;
+  }
+  .wordmark em { font-style: italic; color: var(--accent); }
+
+  .label {
+    font-family: "PT Sans", sans-serif;
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .18em;
+    color: var(--ink-faint);
+  }
+
+  select {
+    font-family: "PT Sans", sans-serif;
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--ink-soft);
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--rule);
+    padding: .3rem 1.4rem .3rem .1rem;
+    cursor: pointer;
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+                      linear-gradient(135deg, currentColor 50%, transparent 50%);
+    background-position: right .5rem center, right .25rem center;
+    background-size: 4px 4px, 4px 4px;
+    background-repeat: no-repeat;
+  }
+  select:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .rule {
+    margin: 1.5rem 0 2.25rem;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    height: 4px;
+  }
+
+  /* ---------- action ---------- */
+
+  .action {
+    width: 100%;
+    display: block;
+    font-family: "PT Sans", sans-serif;
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .2em;
+    color: var(--paper-2);
+    background: var(--ink);
+    border: 0;
+    padding: 1.15rem 1.5rem;
+    cursor: pointer;
+    transition: background .25s ease, transform .12s ease, letter-spacing .25s ease;
+  }
+  .action:hover:not(:disabled) { background: var(--accent); letter-spacing: .24em; }
+  .action:active:not(:disabled) { transform: translateY(1px); }
+  .action:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .action:disabled { cursor: wait; opacity: .55; }
+
+  .status {
+    margin-top: 1.5rem;
+    font-family: "PT Sans", sans-serif;
+    font-size: .78rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    min-height: 1.2rem;
+  }
+  .status[data-kind="error"],
+  .status[data-kind="warn"] {
+    color: var(--accent);
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: .95rem;
+    font-family: "PT Serif", serif;
+    line-height: 1.6;
+  }
+  .dots::after { content: ""; animation: dots 1.4s steps(4, end) infinite; }
+  @keyframes dots {
+    0% { content: ""; } 25% { content: "·"; }
+    50% { content: "· ·"; } 75% { content: "· · ·"; }
+  }
+
+  /* ---------- archive layout ---------- */
+
+  .archive {
+    display: grid;
+    grid-template-columns: 15.5rem minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 3.25rem);
+    margin-top: 2.5rem;
+    align-items: start;
+  }
+  .archive[hidden] { display: none; }
+
+  .index {
+    position: sticky;
+    top: 2rem;
+    border-top: 2px solid var(--ink);
+    padding-top: .9rem;
+  }
+
+  .index-label {
+    font-family: "PT Sans", sans-serif;
+    font-size: .64rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .22em;
+    color: var(--ink-faint);
+    margin: 0 0 .9rem;
+  }
+
+  .day {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    border-left: 2px solid transparent;
+    padding: .7rem 0 .8rem .85rem;
+    cursor: pointer;
+    font-family: inherit;
+    color: inherit;
+    transition: border-color .2s ease, padding-left .2s ease;
+  }
+  .day + .day { border-top: 1px solid var(--rule); }
+  .day:hover { border-left-color: var(--rule); padding-left: 1.05rem; }
+  .day:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .day[aria-current="true"] { border-left-color: var(--accent); padding-left: 1.05rem; }
+
+  .day-date {
+    display: block;
+    font-family: "PT Sans", sans-serif;
+    font-size: .63rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .16em;
+    color: var(--ink-faint);
+    margin-bottom: .2rem;
+  }
+  .day[aria-current="true"] .day-date { color: var(--accent); }
+
+  .day-title {
+    display: block;
+    font-family: "Cormorant Garamond", Garamond, serif;
+    font-size: 1.12rem;
+    font-weight: 600;
+    line-height: 1.24;
+    color: var(--ink-soft);
+    transition: color .2s ease;
+  }
+  .day:hover .day-title { color: var(--ink); }
+  .day[aria-current="true"] .day-title { color: var(--ink); }
+
+  .today-tag {
+    display: inline-block;
+    font-family: "PT Sans", sans-serif;
+    font-size: .55rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--paper-2);
+    background: var(--accent);
+    padding: .1rem .38rem;
+    margin-left: .4rem;
+    vertical-align: .1em;
+  }
+
+  /* ---------- reading ---------- */
+
+  .reading {
+    position: relative;
+    background: var(--paper-2);
+    box-shadow: var(--shadow);
+    padding: clamp(1.75rem, 4vw, 3.25rem);
+    border-top: 3px solid var(--accent);
+  }
+
+  .copy {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translateY(-100%);
+    font-family: "PT Sans", sans-serif;
+    font-size: .66rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .16em;
+    color: var(--ink-soft);
+    background: transparent;
+    border: 0;
+    padding: .55rem .1rem;
+    cursor: pointer;
+    transition: color .2s ease;
+  }
+  .copy:hover { color: var(--accent); }
+  .copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .copy[data-done="1"] { color: var(--accent); }
+
+  .scripture {
+    margin: 0 0 2rem;
+    padding-left: 2.25rem;
+    /* Room for the closing mark to hang into, since it has no width of its
+       own (see .scripture::after). */
+    padding-right: 1.6rem;
+    position: relative;
+    font-style: italic;
+    font-size: 1.06rem;
+    color: var(--ink-soft);
+    line-height: 1.85;
+  }
+  .scripture::before,
+  .scripture::after {
+    font-family: "Cormorant Garamond", Garamond, serif;
+    font-size: 4.5rem;
+    font-style: normal;
+    color: var(--accent);
+    opacity: .5;
+  }
+
+  /* Opening mark hangs in the left margin, clear of the text. */
+  .scripture::before {
+    content: "\201C";
+    position: absolute;
+    left: -.1rem;
+    top: -.9rem;
+    line-height: 1;
+  }
+
+  /* Closing mark follows the last word, wherever the quote happens to end.
+     line-height:0 stops the oversized glyph stretching its line box, and
+     width:0 means it carries no advance width -- so it can never be pushed
+     onto a line of its own, which on a narrow screen looked like a stray
+     quotation mark floating below the verse. It hangs into the padding-right
+     reserved above. */
+  .scripture::after {
+    content: "\201D";
+    display: inline-block;
+    width: 0;
+    line-height: 0;
+    /* Offset visually rather than with margin/vertical-align: those feed back
+       into layout, which either pushes the glyph onto a line of its own or
+       stretches the last line. Relative positioning moves only the paint. */
+    position: relative;
+    left: .1em;
+    top: .28em;
+  }
+
+  .reference {
+    font-family: "PT Sans", sans-serif;
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .18em;
+    color: var(--accent);
+    margin: 0 0 .35rem;
+  }
+
+  .date {
+    font-family: "PT Sans", sans-serif;
+    font-size: .7rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 1.1rem;
+  }
+
+  .title {
+    font-family: "Cormorant Garamond", Garamond, serif;
+    font-size: clamp(1.85rem, 4.5vw, 2.6rem);
+    font-weight: 600;
+    line-height: 1.14;
+    margin: 0 0 2rem;
+    text-wrap: balance;
+  }
+
+  .body p { margin: 0 0 1.35rem; text-align: justify; hyphens: auto; }
+  .body p:first-of-type::first-letter {
+    float: left;
+    font-family: "Cormorant Garamond", Garamond, serif;
+    font-size: 3.9rem;
+    line-height: .82;
+    padding: .1rem .55rem 0 0;
+    color: var(--accent);
+  }
+
+  .provenance {
+    margin-top: 2.5rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--rule);
+    font-family: "PT Sans", sans-serif;
+    font-size: .68rem;
+    line-height: 1.7;
+    letter-spacing: .04em;
+    color: var(--ink-faint);
+  }
+
+  .stagger > * { opacity: 0; animation: rise .7s cubic-bezier(.2,.7,.3,1) forwards; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stagger > * { opacity: 1; animation: none; }
+    .action:hover:not(:disabled) { letter-spacing: .2em; }
+    .dots::after { animation: none; content: "· · ·"; }
+    .day, .day-title { transition: none; }
+  }
+
+  /* ---------- narrow ---------- */
+
+  @media (max-width: 52rem) {
+    .archive { grid-template-columns: minmax(0, 1fr); }
+    .index { position: static; }
+    .days {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .day {
+      flex: 0 0 13rem;
+      scroll-snap-align: start;
+      border-left: 0;
+      border-bottom: 2px solid transparent;
+      padding: .7rem .9rem .8rem 0;
+    }
+    .day + .day { border-top: 0; }
+    .day:hover { padding-left: 0; }
+    .day[aria-current="true"] {
+      border-left: 0;
+      border-bottom-color: var(--accent);
+      padding-left: 0;
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .body p { text-align: left; }
+    .copy { position: static; transform: none; display: block; margin-bottom: .75rem; }
+  }
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<main>
+  <div class="masthead">
+    <h1 class="wordmark">Daily <em>Grace</em></h1>
+    <label class="label">
+      Language
+      <select id="lang" aria-label="Target language">
+        <option value="English">English — original</option>
+        <option value="Russian" selected>Russian</option>
+        <option value="Korean">Korean</option>
+        <option value="Spanish">Spanish</option>
+        <option value="Simplified Chinese">Chinese</option>
+        <option value="Japanese">Japanese</option>
+        <option value="Ukrainian">Ukrainian</option>
+        <option value="French">French</option>
+        <option value="Portuguese">Portuguese</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="rule"></div>
+
+  <button class="action" id="get">Retrieve the last seven days</button>
+
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+
+  <div class="archive" id="archive" hidden>
+    <nav class="index" aria-label="Past devotionals">
+      <p class="index-label">Archive</p>
+      <div class="days" id="days"></div>
+    </nav>
+
+    <article class="reading">
+      <button class="copy" id="copy">Copy text</button>
+      <div class="stagger" id="content"></div>
+      <p class="provenance" id="provenance"></p>
+    </article>
+  </div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var button  = document.getElementById("get");
+  var status  = document.getElementById("status");
+  var archive = document.getElementById("archive");
+  var daysBox = document.getElementById("days");
+  var content = document.getElementById("content");
+  var prov    = document.getElementById("provenance");
+  var copyBtn = document.getElementById("copy");
+  var langSel = document.getElementById("lang");
+
+  var days = [];
+  var selected = 0;
+  var langCode = "ru";
+  var copyTimer = null;
+
+  function setStatus(message, kind) {
+    status.textContent = message || "";
+    if (kind) { status.dataset.kind = kind; } else { delete status.dataset.kind; }
+    status.classList.toggle("dots", kind === "loading");
+  }
+
+  function element(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) { node.className = className; }
+    if (text) { node.textContent = text; }
+    return node;
+  }
+
+  // Render the date in the language being read, not the browser's.
+  function formatDate(iso) {
+    var parts = iso.split("-");
+    var date = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+    try {
+      return new Intl.DateTimeFormat(langCode, {
+        day: "numeric", month: "long"
+      }).format(date);
+    } catch (e) {
+      return iso;
+    }
+  }
+
+  function renderIndex() {
+    daysBox.innerHTML = "";
+
+    days.forEach(function (day, i) {
+      var item = element("button", "day");
+      item.type = "button";
+      item.setAttribute("aria-current", i === selected ? "true" : "false");
+
+      var date = element("span", "day-date", formatDate(day.date_label));
+      if (i === 0) { date.appendChild(element("span", "today-tag", "Latest")); }
+      item.appendChild(date);
+      item.appendChild(element("span", "day-title", day.title || day.date_label));
+
+      item.addEventListener("click", function () { select(i); });
+      daysBox.appendChild(item);
+    });
+  }
+
+  function renderReading() {
+    var day = days[selected];
+    if (!day) { return; }
+
+    content.innerHTML = "";
+    var pieces = [];
+
+    if (day.scripture) {
+      pieces.push(element("blockquote", "scripture", day.scripture));
+    }
+
+    var meta = day.meta || [];
+    meta.forEach(function (line, i) {
+      if (i === meta.length - 1) {
+        pieces.push(element("h2", "title", line));
+      } else {
+        pieces.push(element("p", i === 0 ? "reference" : "date", line));
+      }
+    });
+
+    // If the email had no short heading lines, still show something.
+    if (!meta.length && day.title) {
+      pieces.push(element("h2", "title", day.title));
+    }
+
+    var body = element("div", "body");
+    (day.body || []).forEach(function (paragraph) {
+      body.appendChild(element("p", null, paragraph));
+    });
+    pieces.push(body);
+
+    pieces.forEach(function (node, i) {
+      node.style.animationDelay = (i * 70) + "ms";
+      content.appendChild(node);
+    });
+
+    prov.textContent =
+      (day.subject || "Daily Grace Inspiration") +
+      "  ·  " + day.date_label +
+      "  ·  " + langCode + " via " + day.backend +
+      "  ·  saved to " + day.saved_to;
+  }
+
+  function select(index) {
+    selected = index;
+    var items = daysBox.querySelectorAll(".day");
+    for (var i = 0; i < items.length; i++) {
+      items[i].setAttribute("aria-current", i === index ? "true" : "false");
+    }
+    renderReading();
+  }
+
+  function load() {
+    button.disabled = true;
+    archive.hidden = true;
+    setStatus("Retrieving seven days — the first run takes a minute", "loading");
+
+    fetch("/api/devotional?days=7&lang=" + encodeURIComponent(langSel.value))
+      .then(function (response) { return response.json(); })
+      .then(function (data) {
+        if (!data.ok) {
+          setStatus(data.error || "Something went wrong.", "error");
+          return;
+        }
+        days = data.days || [];
+        langCode = data.language || "ru";
+        selected = 0;
+        renderIndex();
+        renderReading();
+        archive.hidden = false;
+        setStatus(data.warning || "", data.warning ? "warn" : null);
+      })
+      .catch(function (err) {
+        setStatus("Could not reach the local server. Is it still running? (" +
+                  err.message + ")", "error");
+      })
+      .then(function () { button.disabled = false; });
+  }
+
+  function copy() {
+    var day = days[selected];
+    if (!day || !day.text) { return; }
+
+    var done = function () {
+      copyBtn.textContent = "Copied";
+      copyBtn.dataset.done = "1";
+      clearTimeout(copyTimer);
+      copyTimer = setTimeout(function () {
+        copyBtn.textContent = "Copy text";
+        delete copyBtn.dataset.done;
+      }, 2200);
+    };
+
+    var fallback = function () {
+      var area = document.createElement("textarea");
+      area.value = day.text;
+      area.setAttribute("readonly", "");
+      area.style.position = "fixed";
+      area.style.opacity = "0";
+      document.body.appendChild(area);
+      area.select();
+      try { document.execCommand("copy"); done(); }
+      catch (e) { copyBtn.textContent = "Press Ctrl+C"; }
+      document.body.removeChild(area);
+    };
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(day.text).then(done, fallback);
+    } else {
+      fallback();
+    }
+  }
+
+  button.addEventListener("click", load);
+  copyBtn.addEventListener("click", copy);
+})();
+</script>
+</body>
+</html>
