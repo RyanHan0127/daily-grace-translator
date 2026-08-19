@@ -8,11 +8,13 @@ Built because reading a daily devotional in a second language meant copying it
 out of Gmail by hand every morning, deleting the ads and footers, and pasting it
 into a translator.
 
-```
-┌────────────────┐   ┌──────────────────┐   ┌─────────────┐   ┌────────────┐
-│  Gmail (IMAP)  │──▶│  strip to the    │──▶│  translate  │──▶│  file  +   │
-│  read-only     │   │  devotional only │   │  or passthru│   │  clipboard │
-└────────────────┘   └──────────────────┘   └─────────────┘   └────────────┘
+```mermaid
+flowchart LR
+    G["Gmail<br/>IMAP, read-only"] --> S["Strip<br/>promos, notes, footers"]
+    S --> R["Repair<br/>paragraph breaks"]
+    R --> T["Translate<br/>or pass through"]
+    T --> O["Text file<br/>+ clipboard"]
+    T <--> C[("Cached<br/>translations")]
 ```
 
 **No API keys. No paid services. No dependencies.** Every script is Python
